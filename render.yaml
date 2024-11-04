@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: medusa-backend
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 9000
+      - key: MEDUSA_ADMIN_ONBOARDING_TYPE
+        value: default
+      - key: JWT_SECRET
+        value: supersecret # Consider using Render's secret management for production
+      - key: COOKIE_SECRET
+        value: supersecret # Consider using Render's secret management for production
+      - key: DATABASE_URL
+        value: postgresql://eats_owner:8yLGFemH6IuQ@ep-dark-mountain-a5m9jppy.us-east-2.aws.neon.tech/eats?sslmode=require
+      - key: REDIS_URL
+        fromService:
+          name: medusa-redis
+          type: redis
+          property: connectionString
+      - key: STORE_CORS
+        value: https://medusa-storefront.onrender.com,http://localhost:8000 # Update with your storefront URL
+      - key: ADMIN_CORS
+        value: https://medusa-admin.onrender.com,http://localhost:7000,http://localhost:7001 # Update with your admin URL
+      - key: AUTH_CORS
+        value: https://medusa-admin.onrender.com,http://localhost:7000,http://localhost:7001 # Update with your admin URL
+
+  - type: redis
+    name: medusa-redis
+    ipAllowList: [] # Only allow internal connections
+    plan: starter
